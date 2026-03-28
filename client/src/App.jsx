@@ -5,6 +5,7 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Home from './pages/Home'
 import NewNote from './pages/NewNote'
+import NoteDetail from './pages/NoteDetail'
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
             <Route path="/new" element={<ProtectedRoute><NewNote /></ProtectedRoute>} />
+            <Route path="/notes/:id" element={<ProtectedRoute><NoteDetail /></ProtectedRoute>} />
           </Routes>
         </div>
       </BrowserRouter>

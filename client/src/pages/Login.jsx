@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 
@@ -26,52 +27,66 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50 px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <h1 className="text-3xl font-bold text-center text-indigo-600 mb-2">NoteWise</h1>
-        <p className="text-center text-gray-500 mb-8">Welcome back</p>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-4">
+      <div className="bg-mesh" aria-hidden />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative z-10 w-full max-w-md rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.07] to-white/[0.02] p-8 shadow-2xl shadow-black/50 ring-1 ring-white/[0.06] backdrop-blur-xl"
+      >
+        <div className="mb-8 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#58a6ff] to-[#a855f7] text-lg font-bold text-white shadow-[0_0_32px_-4px_rgba(88,166,255,0.5)]">
+            N
+          </div>
+          <h1 className="text-2xl font-bold text-white">Welcome back</h1>
+          <p className="mt-1 text-sm text-[#8b949e]">Sign in to NoteWise</p>
+        </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm">{error}</div>
+          <div className="mb-4 rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="mb-1.5 block text-sm font-medium text-[#c9d1d9]">Email</label>
             <input
               type="email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
+              className="w-full rounded-xl border border-white/[0.1] bg-white/[0.04] px-4 py-3 text-[#e6edf3] outline-none transition placeholder:text-[#484f58] focus:border-[#58a6ff]/40 focus:ring-1 focus:ring-[#58a6ff]/30"
               placeholder="you@example.com"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="mb-1.5 block text-sm font-medium text-[#c9d1d9]">Password</label>
             <input
               type="password"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition"
-              placeholder="Your password"
+              className="w-full rounded-xl border border-white/[0.1] bg-white/[0.04] px-4 py-3 text-[#e6edf3] outline-none transition placeholder:text-[#484f58] focus:border-[#58a6ff]/40 focus:ring-1 focus:ring-[#58a6ff]/30"
+              placeholder="••••••••"
               required
             />
           </div>
-          <button
+          <motion.button
             type="submit"
             disabled={loading}
-            className="w-full py-2.5 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            whileHover={{ scale: loading ? 1 : 1.01 }}
+            whileTap={{ scale: loading ? 1 : 0.99 }}
+            className="w-full rounded-xl bg-gradient-to-r from-[#58a6ff] to-[#7c3aed] py-3 text-sm font-semibold text-white shadow-[0_8px_32px_-8px_rgba(88,166,255,0.45)] transition disabled:opacity-50"
           >
-            {loading ? 'Signing in...' : 'Login'}
-          </button>
+            {loading ? 'Signing in…' : 'Login'}
+          </motion.button>
         </form>
 
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="mt-6 text-center text-sm text-[#8b949e]">
           Don&apos;t have an account?{' '}
-          <Link to="/register" className="text-indigo-600 font-medium hover:underline">Register</Link>
+          <Link to="/register" className="font-medium text-[#58a6ff] hover:text-[#79c0ff]">
+            Register
+          </Link>
         </p>
-      </div>
+      </motion.div>
     </div>
   )
 }

@@ -40,9 +40,6 @@ export default function Sidebar({ tags = [] }) {
         <Link to="/" className={navClass(onLibrary)}>
           Dashboard
         </Link>
-        <Link to="/" className={navClass(onLibrary)}>
-          Notes
-        </Link>
         <Link to="/?view=favorites" className={navClass(onFavorites)}>
           Favorites
         </Link>

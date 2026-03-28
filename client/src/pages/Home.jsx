@@ -18,7 +18,9 @@ export default function Home() {
       const { data } = await api.get('/notes')
       setNotes(data)
     } catch (err) {
-      console.error('Failed to fetch notes:', err)
+      if (err.response?.status !== 401) {
+        console.error('Failed to fetch notes:', err)
+      }
     } finally {
       setLoading(false)
     }

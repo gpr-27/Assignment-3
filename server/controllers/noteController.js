@@ -1,5 +1,5 @@
 const Note = require('../models/Note');
-const pdf = require('pdf-parse');
+const { PDFParse } = require('pdf-parse');
 const { analyzeNotes } = require('../services/groqService');
 
 exports.analyzeNote = async (req, res) => {
@@ -8,8 +8,13 @@ exports.analyzeNote = async (req, res) => {
     const title = req.body.title || 'Untitled Note';
 
     if (req.file) {
-      const pdfData = await pdf(req.file.buffer);
-      text = pdfData.text;
+      const parser = new PDFParse({ data: req.file.buffer });
+      try {
+        const pdfResult = await parser.getText();
+        text = pdfResult.text || '';
+      } finally {
+        await parser.destroy();
+      }
     }
 
     if (!text.trim()) {

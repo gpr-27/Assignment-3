@@ -73,12 +73,12 @@ export default function NoteDetail() {
           {loading && <span className="text-sm text-[#484f58]">Loading…</span>}
         </div>
         {note && (
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 flex-wrap items-center justify-end gap-3">
             <motion.button
               type="button"
               whileTap={{ scale: 0.92 }}
               onClick={toggleFavorite}
-              className="rounded-xl border border-white/[0.1] bg-white/[0.04] px-3 py-2 text-lg text-amber-200 transition hover:border-[#58a6ff]/30"
+              className="flex h-10 min-w-10 items-center justify-center rounded-xl border border-white/[0.1] bg-white/[0.04] text-lg text-amber-200 transition hover:border-[#58a6ff]/30"
               title="Favorite"
             >
               {note.isFavorite ? '★' : '☆'}
@@ -87,7 +87,7 @@ export default function NoteDetail() {
               type="button"
               whileTap={{ scale: 0.95 }}
               onClick={handleDelete}
-              className="rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-300 transition hover:bg-red-500/20"
+              className="rounded-xl border border-red-500/25 bg-red-500/10 px-5 py-2.5 text-sm font-medium text-red-300 transition hover:bg-red-500/20"
             >
               Delete
             </motion.button>

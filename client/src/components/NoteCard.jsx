@@ -60,27 +60,43 @@ export default function NoteCard({ note, onUpdate, onRemove }) {
               : ''
           }`}
         >
-          <AnimatePresence>
-            {hovered && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="absolute right-3 top-3 z-10 flex gap-1"
+          <div className="mb-3 flex min-h-10 items-center justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <AnimatePresence mode="popLayout">
+                {hovered && (
+                  <motion.button
+                    key="del"
+                    type="button"
+                    initial={{ opacity: 0, x: -6 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -6 }}
+                    transition={{ duration: 0.15 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={handleDelete}
+                    className="rounded-lg border border-red-500/35 bg-red-500/15 px-2.5 py-1.5 text-[11px] font-semibold text-red-200 transition hover:bg-red-500/25"
+                  >
+                    Delete
+                  </motion.button>
+                )}
+              </AnimatePresence>
+            </div>
+            <motion.button
+              type="button"
+              onClick={toggleFavorite}
+              whileTap={{ scale: 0.88 }}
+              className="shrink-0 flex h-9 w-9 items-center justify-center rounded-xl border border-white/[0.12] bg-[#0d1117]/85 text-base backdrop-blur-md transition hover:border-[#58a6ff]/45 hover:shadow-[0_0_18px_-4px_rgba(88,166,255,0.45)]"
+              title={note.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+            >
+              <motion.span
+                animate={starBurst ? { scale: [1, 1.35, 1], rotate: [0, 15, -15, 0] } : {}}
+                transition={{ duration: 0.35 }}
               >
-                <motion.button
-                  type="button"
-                  whileTap={{ scale: 0.9 }}
-                  onClick={handleDelete}
-                  className="rounded-lg border border-red-500/30 bg-[#0d1117]/90 px-2 py-1 text-[11px] font-medium text-red-300 backdrop-blur-sm transition hover:bg-red-500/20"
-                >
-                  Delete
-                </motion.button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                {note.isFavorite ? '★' : '☆'}
+              </motion.span>
+            </motion.button>
+          </div>
 
-          <div className="mb-3 pr-12">
+          <div className="mb-3">
             <h3 className="line-clamp-2 text-base font-semibold leading-snug text-white transition group-hover:text-[#79c0ff]">
               {note.title}
             </h3>
@@ -115,21 +131,6 @@ export default function NoteCard({ note, onUpdate, onRemove }) {
           </div>
         </div>
       </Link>
-
-      <motion.button
-        type="button"
-        onClick={toggleFavorite}
-        whileTap={{ scale: 0.85 }}
-        className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-xl border border-white/[0.1] bg-[#0d1117]/80 text-lg backdrop-blur-md transition hover:border-[#58a6ff]/40 hover:shadow-[0_0_20px_-4px_rgba(88,166,255,0.5)]"
-        title={note.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-      >
-        <motion.span
-          animate={starBurst ? { scale: [1, 1.35, 1], rotate: [0, 15, -15, 0] } : {}}
-          transition={{ duration: 0.35 }}
-        >
-          {note.isFavorite ? '★' : '☆'}
-        </motion.span>
-      </motion.button>
     </motion.div>
   )
 }

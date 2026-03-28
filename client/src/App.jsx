@@ -4,6 +4,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Home from './pages/Home'
+import NewNote from './pages/NewNote'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+            <Route path="/new" element={<ProtectedRoute><NewNote /></ProtectedRoute>} />
           </Routes>
         </div>
       </BrowserRouter>

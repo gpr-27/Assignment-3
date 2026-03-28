@@ -1,1 +1,88 @@
 @import "tailwindcss";
+
+:root {
+  --bg-deep: #0d1117;
+  --bg-elevated: #161b22;
+  --border-subtle: rgba(139, 148, 158, 0.2);
+  --accent: #58a6ff;
+  --accent-glow: rgba(88, 166, 255, 0.45);
+  --violet-glow: rgba(139, 92, 246, 0.35);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background-color: var(--bg-deep);
+  color: #e6edf3;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Animated mesh gradient background */
+.bg-mesh {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% -20%, rgba(88, 166, 255, 0.18), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(139, 92, 246, 0.15), transparent),
+    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(56, 189, 248, 0.08), transparent);
+  animation: mesh-shift 18s ease-in-out infinite alternate;
+}
+
+@keyframes mesh-shift {
+  0% {
+    opacity: 1;
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    opacity: 0.95;
+    filter: hue-rotate(25deg);
+  }
+}
+
+/* Custom scrollbar (dark) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(88, 166, 255, 0.35) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(88, 166, 255, 0.25);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(88, 166, 255, 0.45);
+}
+
+/* React Flow dark pane */
+.react-flow__controls {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid rgba(139, 148, 158, 0.2) !important;
+  border-radius: 12px !important;
+  background: rgba(22, 27, 34, 0.9) !important;
+  backdrop-filter: blur(12px);
+}
+
+.react-flow__controls-button {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(139, 148, 158, 0.15) !important;
+  fill: #8b949e !important;
+}
+
+.react-flow__controls-button:hover {
+  background: rgba(88, 166, 255, 0.12) !important;
+}

@@ -1,10 +1,15 @@
-import { useCallback, useMemo } from 'react'
+import { useMemo } from 'react'
 import { ReactFlow, Background, Controls, useNodesState, useEdgesState } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 
 const NODE_COLORS = [
-  '#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981',
-  '#06b6d4', '#f43f5e', '#84cc16',
+  '#58a6ff',
+  '#a855f7',
+  '#22d3ee',
+  '#f472b6',
+  '#34d399',
+  '#fbbf24',
+  '#f87171',
 ]
 
 function buildNodesAndEdges(tree, x = 0, y = 0, depth = 0, index = 0) {
@@ -26,6 +31,7 @@ function buildNodesAndEdges(tree, x = 0, y = 0, depth = 0, index = 0) {
       fontWeight: depth === 0 ? '700' : '500',
       minWidth: '120px',
       textAlign: 'center',
+      boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
     },
   })
 
@@ -39,14 +45,18 @@ function buildNodesAndEdges(tree, x = 0, y = 0, depth = 0, index = 0) {
     const childY = y + 120
 
     const { nodes: childNodes, edges: childEdges } = buildNodesAndEdges(
-      child, childX, childY, depth + 1, index * 10 + i
+      child,
+      childX,
+      childY,
+      depth + 1,
+      index * 10 + i
     )
 
     edges.push({
       id: `edge-${id}-${childId}`,
       source: id,
       target: childId,
-      style: { stroke: '#a5b4fc', strokeWidth: 2 },
+      style: { stroke: 'rgba(88, 166, 255, 0.45)', strokeWidth: 2 },
     })
 
     nodes.push(...childNodes)
@@ -67,11 +77,11 @@ export default function MindMap({ mindMap }) {
   const [edges, , onEdgesChange] = useEdgesState(initialEdges)
 
   if (!mindMap?.label) {
-    return <p className="text-gray-400">No mind map data available.</p>
+    return <p className="text-[#484f58]">No mind map data available.</p>
   }
 
   return (
-    <div className="h-[500px] bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="h-[500px] overflow-hidden rounded-xl border border-white/[0.08] bg-[#010409] ring-1 ring-white/[0.04]">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -81,7 +91,7 @@ export default function MindMap({ mindMap }) {
         fitViewOptions={{ padding: 0.3 }}
         attributionPosition="bottom-left"
       >
-        <Background color="#e2e8f0" gap={20} />
+        <Background color="rgba(88, 166, 255, 0.06)" gap={20} />
         <Controls />
       </ReactFlow>
     </div>

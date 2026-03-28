@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import api from '../utils/api'
-import Navbar from '../components/Navbar'
+import DashboardLayout from '../components/layout/DashboardLayout'
 import SummaryPanel from '../components/SummaryPanel'
 import BulletsPanel from '../components/BulletsPanel'
 import MindMap from '../components/MindMap'
@@ -50,69 +51,95 @@ export default function NoteDetail() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <div className="text-center py-20 text-gray-400">Loading note...</div>
-      </div>
-    )
-  }
-
-  if (!note) return null
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <main className="max-w-4xl mx-auto px-6 py-8">
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-800">{note.title}</h2>
-            <p className="text-sm text-gray-400 mt-1">
-              {new Date(note.createdAt).toLocaleDateString('en-US', {
-                year: 'numeric', month: 'long', day: 'numeric',
-              })}
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <button
+  const header = (
+    <div className="border-b border-white/[0.06] bg-[#0d1117]/70 px-4 py-4 backdrop-blur-xl sm:px-8">
+      <div className="mx-auto flex max-w-4xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-4">
+          <Link to="/" className="text-sm font-medium text-[#8b949e] transition hover:text-[#58a6ff]">
+            ← Notes
+          </Link>
+          {note && (
+            <div className="min-w-0">
+              <h1 className="truncate text-lg font-semibold text-white sm:text-xl">{note.title}</h1>
+              <p className="text-xs text-[#484f58]">
+                {new Date(note.createdAt).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
+            </div>
+          )}
+          {loading && <span className="text-sm text-[#484f58]">Loading…</span>}
+        </div>
+        {note && (
+          <div className="flex items-center gap-2">
+            <motion.button
+              type="button"
+              whileTap={{ scale: 0.92 }}
               onClick={toggleFavorite}
-              className="text-2xl cursor-pointer"
-              title={note.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+              className="rounded-xl border border-white/[0.1] bg-white/[0.04] px-3 py-2 text-lg text-amber-200 transition hover:border-[#58a6ff]/30"
+              title="Favorite"
             >
-              {note.isFavorite ? '⭐' : '☆'}
-            </button>
-            <button
+              {note.isFavorite ? '★' : '☆'}
+            </motion.button>
+            <motion.button
+              type="button"
+              whileTap={{ scale: 0.95 }}
               onClick={handleDelete}
-              className="px-3 py-1.5 text-sm text-red-500 border border-red-200 rounded-lg hover:bg-red-50 transition cursor-pointer"
+              className="rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-300 transition hover:bg-red-500/20"
             >
               Delete
-            </button>
+            </motion.button>
           </div>
-        </div>
-
-        <div className="flex gap-1 mb-6 bg-gray-100 p-1 rounded-lg">
-          {TABS.map((tab, i) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(i)}
-              className={`flex-1 py-2 text-sm font-medium rounded-md transition cursor-pointer ${
-                activeTab === i
-                  ? 'bg-white text-indigo-600 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          {activeTab === 0 && <SummaryPanel note={note} />}
-          {activeTab === 1 && <BulletsPanel bullets={note.bullets} />}
-          {activeTab === 2 && <MindMap mindMap={note.mindMap} />}
-        </div>
-      </main>
+        )}
+      </div>
     </div>
+  )
+
+  if (!loading && !note) return null
+
+  return (
+    <DashboardLayout header={header} tags={[]} showFab>
+      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-8">
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-24 text-[#8b949e]">
+            <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#58a6ff]/30 border-t-[#58a6ff]" />
+            <p className="mt-4 text-sm">Loading note…</p>
+          </div>
+        ) : (
+          <>
+            <div className="mb-6 flex gap-1 rounded-xl border border-white/[0.08] bg-white/[0.03] p-1 ring-1 ring-white/[0.04]">
+              {TABS.map((tab, i) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setActiveTab(i)}
+                  className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition ${
+                    activeTab === i
+                      ? 'bg-gradient-to-r from-[#58a6ff]/20 to-violet-500/20 text-white shadow-[0_0_24px_-8px_rgba(88,166,255,0.4)] ring-1 ring-[#58a6ff]/25'
+                      : 'text-[#8b949e] hover:bg-white/[0.04] hover:text-[#c9d1d9]'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className="rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-6 shadow-xl shadow-black/30 ring-1 ring-white/[0.04] backdrop-blur-md sm:p-8"
+            >
+              {activeTab === 0 && <SummaryPanel note={note} />}
+              {activeTab === 1 && <BulletsPanel bullets={note.bullets} />}
+              {activeTab === 2 && <MindMap mindMap={note.mindMap} />}
+            </motion.div>
+          </>
+        )}
+      </div>
+    </DashboardLayout>
   )
 }

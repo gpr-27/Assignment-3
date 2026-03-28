@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import api from '../utils/api'
-import Navbar from '../components/Navbar'
+import DashboardLayout from '../components/layout/DashboardLayout'
 
 export default function NewNote() {
   const [title, setTitle] = useState('')
@@ -63,109 +64,126 @@ export default function NewNote() {
     }
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <main className="max-w-3xl mx-auto px-6 py-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">New Note</h2>
+  const header = (
+    <div className="border-b border-white/[0.06] bg-[#0d1117]/70 px-4 py-4 backdrop-blur-xl sm:px-8">
+      <div className="mx-auto flex max-w-3xl items-center gap-4">
+        <Link
+          to="/"
+          className="text-sm font-medium text-[#8b949e] transition hover:text-[#58a6ff]"
+        >
+          ← Back
+        </Link>
+        <h1 className="text-lg font-semibold text-white">New note</h1>
+      </div>
+    </div>
+  )
 
+  return (
+    <DashboardLayout header={header} tags={[]} showFab={false}>
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-8">
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-4 text-sm">{error}</div>
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-6 rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200"
+          >
+            {error}
+          </motion.div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Title (optional)</label>
+            <label className="mb-2 block text-sm font-medium text-[#c9d1d9]">Title (optional)</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
+              className="w-full rounded-xl border border-white/[0.1] bg-white/[0.04] px-4 py-3 text-[#e6edf3] outline-none transition placeholder:text-[#484f58] focus:border-[#58a6ff]/40 focus:ring-1 focus:ring-[#58a6ff]/30"
               placeholder="e.g. Binary Search Notes"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Paste your notes</label>
+            <label className="mb-2 block text-sm font-medium text-[#c9d1d9]">Paste your notes</label>
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
               rows={10}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none resize-y text-sm"
+              className="w-full resize-y rounded-xl border border-white/[0.1] bg-white/[0.04] px-4 py-3 text-sm text-[#e6edf3] outline-none transition placeholder:text-[#484f58] focus:border-[#58a6ff]/40 focus:ring-1 focus:ring-[#58a6ff]/30 disabled:opacity-40"
               placeholder="Paste your study notes here..."
               disabled={!!pdfFile}
             />
           </div>
 
           <div className="relative">
-            <div className="flex items-center gap-4 mb-2">
-              <div className="flex-1 h-px bg-gray-300"></div>
-              <span className="text-sm text-gray-400">OR</span>
-              <div className="flex-1 h-px bg-gray-300"></div>
+            <div className="mb-3 flex items-center gap-4">
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+              <span className="text-xs font-medium uppercase tracking-widest text-[#484f58]">or</span>
+              <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
             </div>
 
             <div
-              onDragOver={(e) => { e.preventDefault(); setDragOver(true) }}
+              onDragOver={(e) => {
+                e.preventDefault()
+                setDragOver(true)
+              }}
               onDragLeave={() => setDragOver(false)}
               onDrop={handleDrop}
               onClick={() => fileRef.current?.click()}
-              className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition ${
+              className={`cursor-pointer rounded-2xl border-2 border-dashed p-10 text-center transition ${
                 dragOver
-                  ? 'border-indigo-400 bg-indigo-50'
+                  ? 'border-[#58a6ff]/50 bg-[#58a6ff]/10 shadow-[0_0_40px_-12px_rgba(88,166,255,0.35)]'
                   : pdfFile
-                  ? 'border-green-400 bg-green-50'
-                  : 'border-gray-300 hover:border-indigo-300 hover:bg-indigo-50/30'
+                    ? 'border-emerald-400/35 bg-emerald-500/10'
+                    : 'border-white/[0.12] bg-white/[0.02] hover:border-[#58a6ff]/25 hover:bg-white/[0.04]'
               }`}
             >
               {pdfFile ? (
                 <div>
-                  <p className="text-green-700 font-medium">{pdfFile.name}</p>
-                  <p className="text-sm text-green-600 mt-1">
-                    {(pdfFile.size / 1024).toFixed(1)} KB
-                  </p>
+                  <p className="font-medium text-emerald-200">{pdfFile.name}</p>
+                  <p className="mt-1 text-sm text-emerald-300/80">{(pdfFile.size / 1024).toFixed(1)} KB</p>
                   <button
                     type="button"
-                    onClick={(e) => { e.stopPropagation(); setPdfFile(null) }}
-                    className="text-sm text-red-500 mt-2 hover:underline cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setPdfFile(null)
+                    }}
+                    className="mt-3 text-sm text-red-300 underline-offset-2 hover:underline"
                   >
                     Remove
                   </button>
                 </div>
               ) : (
                 <div>
-                  <p className="text-gray-500 font-medium">Drop a PDF here or click to browse</p>
-                  <p className="text-xs text-gray-400 mt-1">Max 10MB</p>
+                  <p className="font-medium text-[#c9d1d9]">Drop a PDF here or click to browse</p>
+                  <p className="mt-1 text-xs text-[#484f58]">Max 10MB · Text-based PDFs work best</p>
                 </div>
               )}
             </div>
-            <input
-              ref={fileRef}
-              type="file"
-              accept=".pdf"
-              onChange={handleFileChange}
-              className="hidden"
-            />
+            <input ref={fileRef} type="file" accept=".pdf" onChange={handleFileChange} className="hidden" />
           </div>
 
-          <button
+          <motion.button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            whileHover={{ scale: loading ? 1 : 1.01 }}
+            whileTap={{ scale: loading ? 1 : 0.99 }}
+            className="w-full rounded-xl bg-gradient-to-r from-[#58a6ff] to-[#7c3aed] py-3.5 text-sm font-semibold text-white shadow-[0_8px_32px_-8px_rgba(88,166,255,0.45)] transition disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-2">
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                 </svg>
-                Analyzing with AI...
+                Analyzing with AI…
               </span>
             ) : (
               'Analyze with AI'
             )}
-          </button>
+          </motion.button>
         </form>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   )
 }

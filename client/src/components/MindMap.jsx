@@ -25,24 +25,24 @@ function buildNodesAndEdges(tree, x = 0, y = 0, depth = 0, index = 0) {
       background: NODE_COLORS[depth % NODE_COLORS.length],
       color: '#fff',
       border: 'none',
-      borderRadius: '12px',
-      padding: '8px 16px',
-      fontSize: depth === 0 ? '14px' : '12px',
-      fontWeight: depth === 0 ? '700' : '500',
-      minWidth: '120px',
+      borderRadius: '14px',
+      padding: '12px 20px',
+      fontSize: depth === 0 ? '16px' : '14px',
+      fontWeight: depth === 0 ? '700' : '600',
+      minWidth: '148px',
       textAlign: 'center',
-      boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
+      boxShadow: '0 10px 32px rgba(0,0,0,0.4)',
     },
   })
 
   const children = tree.children || []
-  const spacing = 200
+  const spacing = 280
   const startX = x - ((children.length - 1) * spacing) / 2
 
   children.forEach((child, i) => {
     const childId = `node-${depth + 1}-${index * 10 + i}`
     const childX = startX + i * spacing
-    const childY = y + 120
+    const childY = y + 160
 
     const { nodes: childNodes, edges: childEdges } = buildNodesAndEdges(
       child,
@@ -81,14 +81,16 @@ export default function MindMap({ mindMap }) {
   }
 
   return (
-    <div className="h-[500px] overflow-hidden rounded-xl border border-white/[0.08] bg-[#010409] ring-1 ring-white/[0.04]">
+    <div className="min-h-[480px] h-[min(88vh,920px)] w-full overflow-hidden rounded-xl border border-white/[0.08] bg-[#010409] ring-1 ring-white/[0.04]">
       <ReactFlow
         nodes={nodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         fitView
-        fitViewOptions={{ padding: 0.3 }}
+        fitViewOptions={{ padding: 0.12, minZoom: 0.35, maxZoom: 1.65 }}
+        minZoom={0.25}
+        maxZoom={2}
         attributionPosition="bottom-left"
       >
         <Background color="rgba(88, 166, 255, 0.06)" gap={20} />

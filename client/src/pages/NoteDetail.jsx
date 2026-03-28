@@ -53,7 +53,7 @@ export default function NoteDetail() {
 
   const header = (
     <div className="border-b border-white/[0.06] bg-[#0d1117]/70 px-4 py-4 backdrop-blur-xl sm:px-8">
-      <div className="mx-auto flex max-w-4xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <Link to="/" className="text-sm font-medium text-[#8b949e] transition hover:text-[#58a6ff]">
             ← Notes
@@ -101,7 +101,7 @@ export default function NoteDetail() {
 
   return (
     <DashboardLayout header={header} tags={[]} showFab>
-      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-8">
+      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-8">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 text-[#8b949e]">
             <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#58a6ff]/30 border-t-[#58a6ff]" />
@@ -109,16 +109,16 @@ export default function NoteDetail() {
           </div>
         ) : (
           <>
-            <div className="mb-6 flex gap-1 rounded-xl border border-white/[0.08] bg-white/[0.03] p-1 ring-1 ring-white/[0.04]">
+            <div className="mb-6 flex w-full gap-2 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-1.5 ring-1 ring-white/[0.04] sm:p-2">
               {TABS.map((tab, i) => (
                 <button
                   key={tab}
                   type="button"
                   onClick={() => setActiveTab(i)}
-                  className={`flex-1 rounded-lg py-2.5 text-sm font-medium transition ${
+                  className={`min-h-[52px] flex-1 rounded-xl px-4 py-3.5 text-base font-semibold tracking-tight transition sm:min-h-[56px] sm:px-8 sm:py-4 sm:text-lg ${
                     activeTab === i
-                      ? 'bg-gradient-to-r from-[#58a6ff]/20 to-violet-500/20 text-white shadow-[0_0_24px_-8px_rgba(88,166,255,0.4)] ring-1 ring-[#58a6ff]/25'
-                      : 'text-[#8b949e] hover:bg-white/[0.04] hover:text-[#c9d1d9]'
+                      ? 'bg-gradient-to-r from-[#58a6ff]/25 to-violet-500/25 text-white shadow-[0_0_28px_-6px_rgba(88,166,255,0.45)] ring-1 ring-[#58a6ff]/30'
+                      : 'text-[#8b949e] hover:bg-white/[0.05] hover:text-[#e6edf3]'
                   }`}
                 >
                   {tab}
@@ -131,7 +131,7 @@ export default function NoteDetail() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2 }}
-              className="rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-6 shadow-xl shadow-black/30 ring-1 ring-white/[0.04] backdrop-blur-md sm:p-8"
+              className="rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-6 shadow-xl shadow-black/30 ring-1 ring-white/[0.04] backdrop-blur-md sm:p-10"
             >
               {activeTab === 0 && <SummaryPanel note={note} />}
               {activeTab === 1 && <BulletsPanel bullets={note.bullets} />}

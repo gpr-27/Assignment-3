@@ -1,4 +1,39 @@
 const Note = require('../models/Note');
+const pdf = require('pdf-parse');
+const { analyzeNotes } = require('../services/groqService');
+
+exports.analyzeNote = async (req, res) => {
+  try {
+    let text = req.body.text || '';
+    const title = req.body.title || 'Untitled Note';
+
+    if (req.file) {
+      const pdfData = await pdf(req.file.buffer);
+      text = pdfData.text;
+    }
+
+    if (!text.trim()) {
+      return res.status(400).json({ error: 'No text provided. Paste notes or upload a PDF.' });
+    }
+
+    const analysis = await analyzeNotes(text);
+
+    const note = await Note.create({
+      userId: req.userId,
+      title,
+      rawText: text,
+      summary: analysis.summary,
+      bullets: analysis.bullets,
+      tags: analysis.tags,
+      difficulty: analysis.difficulty,
+      mindMap: analysis.mindMap,
+    });
+
+    res.status(201).json(note);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
 exports.getAllNotes = async (req, res) => {
   try {

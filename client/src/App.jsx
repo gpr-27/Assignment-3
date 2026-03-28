@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
+import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
 import Register from './pages/Register'
+import Home from './pages/Home'
 
 function App() {
   return (
@@ -11,7 +13,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/" element={<div className="p-8 text-center text-2xl font-bold text-indigo-600">NoteWise - Home (coming next)</div>} />
+            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
           </Routes>
         </div>
       </BrowserRouter>

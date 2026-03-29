@@ -6,26 +6,28 @@ const difficultyStyle = {
 
 export default function SummaryPanel({ note }) {
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-2">
+    <div className="space-y-8">
+      <div className="flex flex-wrap items-center gap-2.5">
         <span
-          className={`rounded-full px-3 py-1 text-xs font-semibold ring-1 ${difficultyStyle[note.difficulty] || 'bg-white/10 text-[#8b949e] ring-white/10'}`}
+          className={`rounded-full px-3.5 py-1.5 text-sm font-semibold ring-1 ${difficultyStyle[note.difficulty] || 'bg-white/10 text-[#8b949e] ring-white/10'}`}
         >
           {note.difficulty}
         </span>
         {note.tags?.map((tag) => (
           <span
             key={tag}
-            className="rounded-full bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-200 ring-1 ring-violet-400/20"
+            className="rounded-full bg-violet-500/10 px-3 py-1.5 text-sm font-medium text-violet-200 ring-1 ring-violet-400/20"
           >
             {tag}
           </span>
         ))}
       </div>
 
-      <div>
-        <h3 className="mb-3 text-lg font-semibold text-white">Summary</h3>
-        <p className="leading-relaxed text-[#8b949e] whitespace-pre-line">{note.summary}</p>
+      <div className="max-w-none">
+        <h3 className="mb-4 text-xl font-semibold tracking-tight text-white sm:text-2xl">Summary</h3>
+        <p className="text-base leading-[1.75] text-[#aeb8c4] sm:text-[17px] sm:leading-[1.8] whitespace-pre-line">
+          {note.summary}
+        </p>
       </div>
     </div>
   )

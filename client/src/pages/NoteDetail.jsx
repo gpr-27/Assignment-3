@@ -61,8 +61,8 @@ export default function NoteDetail() {
   }
 
   const header = (
-    <div className="border-b border-white/[0.04] bg-[#0a0e14]/70 px-4 py-4 backdrop-blur-2xl backdrop-saturate-[180%] sm:px-8">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="border-b border-white/[0.04] bg-[#0a0e14]/70 px-3 py-4 backdrop-blur-2xl backdrop-saturate-[180%] sm:px-5 lg:px-8">
+      <div className="mx-auto flex w-full max-w-[min(96rem,calc(100%-2rem))] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <Link to="/" className="text-sm font-medium text-[#8b949e] transition hover:text-[#58a6ff]">
             ← Notes
@@ -106,7 +106,7 @@ export default function NoteDetail() {
 
   return (
     <DashboardLayout header={header} tags={[]} showFab>
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-8">
+      <div className="mx-auto w-full max-w-[min(96rem,calc(100%-2rem))] px-3 py-6 sm:px-5 sm:py-8 lg:px-8 lg:py-10">
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 text-[#8b949e]">
             <div className="h-10 w-10 animate-spin rounded-full border-2 border-[#58a6ff]/30 border-t-[#58a6ff]" />
@@ -115,7 +115,7 @@ export default function NoteDetail() {
         ) : (
           <>
             {/* ─── Tab Bar ─────────────────────────────────────── */}
-            <div className="glass mb-6 flex w-full gap-1 overflow-x-auto p-1.5 sm:gap-1.5 sm:p-2">
+            <div className="glass mb-6 flex w-full gap-1 overflow-x-auto rounded-2xl p-1.5 sm:gap-1.5 sm:p-2 lg:p-2.5">
               {TABS.map((tab, i) => (
                 <button
                   key={tab.label}
@@ -136,13 +136,17 @@ export default function NoteDetail() {
             {/* ─── Content Panel ────────────────────────────────── */}
             <motion.div
               key={activeTab}
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25 }}
-              className="glass-elevated p-6 sm:p-10"
+              transition={{ duration: 0.32, ease: [0.25, 0.1, 0.25, 1] }}
+              className={
+                activeTab === 3
+                  ? 'chat-tab-shell p-5 sm:p-8 lg:p-10'
+                  : 'glass-elevated p-5 sm:p-8 lg:p-12'
+              }
             >
               {activeTab === 0 && (
-                <div className="space-y-8">
+                <div className="space-y-10 lg:space-y-12">
                   <SummaryPanel note={note} />
                   <div className="h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
                   <BulletsPanel bullets={note.bullets} />

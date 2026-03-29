@@ -160,6 +160,43 @@ body {
     0 0 0 1px rgba(88, 166, 255, 0.08);
 }
 
+/* ─── Chat: no backdrop-blur on scroll surfaces (blur is costly per frame) ─ */
+
+.chat-scroll-panel {
+  background: linear-gradient(
+    165deg,
+    rgba(18, 23, 31, 0.98) 0%,
+    rgba(13, 17, 23, 0.99) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 4px 28px rgba(0, 0, 0, 0.4);
+  border-radius: 24px;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scroll-behavior: auto;
+}
+
+.chat-bubble-ai {
+  background: rgba(22, 27, 34, 0.96);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.chat-tab-shell {
+  background: linear-gradient(
+    135deg,
+    rgba(18, 23, 31, 0.98) 0%,
+    rgba(13, 17, 23, 0.99) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border-radius: 24px;
+}
+
 /* ─── Custom Scrollbar ───────────────────────────────────────────── */
 
 * {

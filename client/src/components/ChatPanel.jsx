@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import api from '../utils/api'
+import ChatMarkdown from './ChatMarkdown'
 
 export default function ChatPanel({ noteId }) {
   const [messages, setMessages] = useState([])
@@ -14,7 +15,11 @@ export default function ChatPanel({ noteId }) {
   useEffect(() => { scrollToBottom() }, [messages])
 
   const scrollToBottom = () => {
-    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    const el = scrollRef.current
+    if (!el) return
+    requestAnimationFrame(() => {
+      el.scrollTop = el.scrollHeight
+    })
   }
 
   const loadHistory = async () => {
@@ -56,9 +61,12 @@ export default function ChatPanel({ noteId }) {
   }
 
   return (
-    <div className="flex h-[min(65vh,560px)] flex-col">
+    <div className="flex min-h-[min(72vh,720px)] h-[min(78vh,820px)] flex-col">
       {/* Messages area */}
-      <div ref={scrollRef} className="glass flex-1 space-y-4 overflow-y-auto rounded-3xl p-5">
+      <div
+        ref={scrollRef}
+        className="chat-scroll-panel flex-1 space-y-5 overflow-y-auto p-5 sm:p-6 lg:p-7 [contain:layout_paint]"
+      >
         {historyLoading ? (
           <div className="flex items-center justify-center py-12">
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#58a6ff]/30 border-t-[#58a6ff]" />
@@ -75,17 +83,15 @@ export default function ChatPanel({ noteId }) {
           </div>
         ) : (
           messages.map((msg) => (
-            <motion.div
+            <div
               key={msg._id}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
               className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-[80%] rounded-3xl px-5 py-3.5 text-sm leading-relaxed ${
+                className={`min-w-0 rounded-3xl px-5 py-4 text-[15px] leading-relaxed sm:px-6 sm:py-4 sm:text-base ${
                   msg.role === 'user'
-                    ? 'bg-gradient-to-r from-[#58a6ff]/15 to-violet-500/15 text-[#e6edf3] ring-1 ring-[#58a6ff]/15'
-                    : 'glass text-[#c9d1d9]'
+                    ? 'max-w-[min(88%,26rem)] bg-gradient-to-r from-[#58a6ff]/15 to-violet-500/15 text-[#e6edf3] ring-1 ring-[#58a6ff]/15'
+                    : 'chat-bubble-ai max-w-[75%] text-[#c9d1d9]'
                 }`}
               >
                 {msg.role === 'assistant' && (
@@ -93,25 +99,29 @@ export default function ChatPanel({ noteId }) {
                     NoteWise AI
                   </span>
                 )}
-                <p className="whitespace-pre-wrap">{msg.content}</p>
+                {msg.role === 'assistant' ? (
+                  <ChatMarkdown>{msg.content}</ChatMarkdown>
+                ) : (
+                  <p className="whitespace-pre-wrap">{msg.content}</p>
+                )}
               </div>
-            </motion.div>
+            </div>
           ))
         )}
 
         {loading && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-            <div className="glass flex items-center gap-2 rounded-3xl px-5 py-3.5">
+          <div className="flex justify-start">
+            <div className="chat-bubble-ai flex w-full max-w-[75%] items-center gap-2 rounded-3xl px-5 py-3.5">
               <div className="h-2 w-2 animate-bounce rounded-full bg-[#58a6ff]/50" style={{ animationDelay: '0ms' }} />
               <div className="h-2 w-2 animate-bounce rounded-full bg-[#58a6ff]/50" style={{ animationDelay: '150ms' }} />
               <div className="h-2 w-2 animate-bounce rounded-full bg-[#58a6ff]/50" style={{ animationDelay: '300ms' }} />
             </div>
-          </motion.div>
+          </div>
         )}
       </div>
 
       {/* Input */}
-      <form onSubmit={sendMessage} className="mt-4 flex gap-3">
+      <form onSubmit={sendMessage} className="mt-5 flex gap-3 sm:gap-4">
         <input
           ref={inputRef}
           type="text"
@@ -119,14 +129,14 @@ export default function ChatPanel({ noteId }) {
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask about this note…"
           disabled={loading}
-          className="glass-input flex-1 px-5 py-3.5 text-sm text-[#e6edf3] outline-none placeholder:text-[#484f58] disabled:opacity-50"
+          className="glass-input min-h-[52px] flex-1 px-5 py-3.5 text-[15px] text-[#e6edf3] outline-none placeholder:text-[#484f58] disabled:opacity-50 sm:text-base"
         />
         <motion.button
           type="submit"
           disabled={loading || !input.trim()}
-          whileHover={{ scale: loading ? 1 : 1.04 }}
-          whileTap={{ scale: loading ? 1 : 0.96 }}
-          className="glass-button shrink-0 px-6 py-3.5 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
+          whileHover={{ scale: loading ? 1 : 1.03 }}
+          whileTap={{ scale: loading ? 1 : 0.97 }}
+          className="glass-button min-h-[52px] shrink-0 px-7 py-3.5 text-[15px] font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50 sm:text-base"
         >
           Send
         </motion.button>

@@ -6,8 +6,12 @@ import DashboardLayout from '../components/layout/DashboardLayout'
 import SummaryPanel from '../components/SummaryPanel'
 import BulletsPanel from '../components/BulletsPanel'
 import MindMap from '../components/MindMap'
+import QuizPanel from '../components/QuizPanel'
+import FlashcardsPanel from '../components/FlashcardsPanel'
+import ChatPanel from '../components/ChatPanel'
+import ExportPanel from '../components/ExportPanel'
 
-const TABS = ['Summary', 'Key Points', 'Mind Map']
+const TABS = ['Summary', 'Key Points', 'Mind Map', 'Quiz', 'Flashcards', 'Chat', 'Export']
 
 export default function NoteDetail() {
   const { id } = useParams()
@@ -15,6 +19,7 @@ export default function NoteDetail() {
   const [note, setNote] = useState(null)
   const [activeTab, setActiveTab] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [generating, setGenerating] = useState(false)
 
   useEffect(() => {
     fetchNote()
@@ -48,6 +53,18 @@ export default function NoteDetail() {
       setNote(data)
     } catch (err) {
       console.error('Failed to toggle favorite:', err)
+    }
+  }
+
+  const handleGenerateQuiz = async () => {
+    setGenerating(true)
+    try {
+      const { data } = await api.post(`/notes/${id}/quiz`)
+      setNote(data)
+    } catch (err) {
+      console.error('Failed to generate quiz:', err)
+    } finally {
+      setGenerating(false)
     }
   }
 
@@ -109,13 +126,13 @@ export default function NoteDetail() {
           </div>
         ) : (
           <>
-            <div className="mb-6 flex w-full gap-2 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-1.5 ring-1 ring-white/[0.04] sm:p-2">
+            <div className="mb-6 flex w-full gap-1 overflow-x-auto rounded-2xl border border-white/[0.08] bg-white/[0.03] p-1.5 ring-1 ring-white/[0.04] sm:gap-1.5 sm:p-2">
               {TABS.map((tab, i) => (
                 <button
                   key={tab}
                   type="button"
                   onClick={() => setActiveTab(i)}
-                  className={`min-h-[52px] flex-1 rounded-xl px-4 py-3.5 text-base font-semibold tracking-tight transition sm:min-h-[56px] sm:px-8 sm:py-4 sm:text-lg ${
+                  className={`shrink-0 rounded-xl px-3 py-3 text-sm font-semibold tracking-tight transition sm:min-h-[52px] sm:flex-1 sm:px-4 sm:py-3.5 sm:text-base ${
                     activeTab === i
                       ? 'bg-gradient-to-r from-[#58a6ff]/25 to-violet-500/25 text-white shadow-[0_0_28px_-6px_rgba(88,166,255,0.45)] ring-1 ring-[#58a6ff]/30'
                       : 'text-[#8b949e] hover:bg-white/[0.05] hover:text-[#e6edf3]'
@@ -136,6 +153,22 @@ export default function NoteDetail() {
               {activeTab === 0 && <SummaryPanel note={note} />}
               {activeTab === 1 && <BulletsPanel bullets={note.bullets} />}
               {activeTab === 2 && <MindMap mindMap={note.mindMap} />}
+              {activeTab === 3 && (
+                <QuizPanel
+                  quiz={note.quiz}
+                  onGenerate={handleGenerateQuiz}
+                  generating={generating}
+                />
+              )}
+              {activeTab === 4 && (
+                <FlashcardsPanel
+                  flashcards={note.flashcards}
+                  onGenerate={handleGenerateQuiz}
+                  generating={generating}
+                />
+              )}
+              {activeTab === 5 && <ChatPanel noteId={id} />}
+              {activeTab === 6 && <ExportPanel note={note} />}
             </motion.div>
           </>
         )}

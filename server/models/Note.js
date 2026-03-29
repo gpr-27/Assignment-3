@@ -36,6 +36,25 @@ const noteSchema = new mongoose.Schema({
     type: Object,
     default: {},
   },
+  quiz: {
+    type: [
+      {
+        question: String,
+        options: [String],
+        correctIndex: Number,
+      },
+    ],
+    default: [],
+  },
+  flashcards: {
+    type: [
+      {
+        front: String,
+        back: String,
+      },
+    ],
+    default: [],
+  },
   isFavorite: {
     type: Boolean,
     default: false,

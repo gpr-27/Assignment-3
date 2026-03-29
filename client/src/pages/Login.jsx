@@ -32,10 +32,10 @@ export default function Login() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 w-full max-w-md rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.07] to-white/[0.02] p-8 shadow-2xl shadow-black/50 ring-1 ring-white/[0.06] backdrop-blur-xl"
+        className="glass-elevated relative z-10 w-full max-w-md p-8"
       >
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#58a6ff] to-[#a855f7] text-lg font-bold text-white shadow-[0_0_32px_-4px_rgba(88,166,255,0.5)]">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#58a6ff] to-[#a855f7] text-lg font-bold text-white shadow-[0_0_32px_-4px_rgba(88,166,255,0.5)]">
             N
           </div>
           <h1 className="text-2xl font-bold text-white">Welcome back</h1>
@@ -43,7 +43,7 @@ export default function Login() {
         </div>
 
         {error && (
-          <div className="mb-4 rounded-xl border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</div>
+          <div className="mb-4 rounded-2xl border border-red-500/20 bg-red-500/8 px-4 py-3 text-sm text-red-200">{error}</div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -53,7 +53,7 @@ export default function Login() {
               type="email"
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
-              className="w-full rounded-xl border border-white/[0.1] bg-white/[0.04] px-4 py-3 text-[#e6edf3] outline-none transition placeholder:text-[#484f58] focus:border-[#58a6ff]/40 focus:ring-1 focus:ring-[#58a6ff]/30"
+              className="glass-input w-full px-4 py-3 text-[#e6edf3] outline-none placeholder:text-[#484f58]"
               placeholder="you@example.com"
               required
             />
@@ -64,7 +64,7 @@ export default function Login() {
               type="password"
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
-              className="w-full rounded-xl border border-white/[0.1] bg-white/[0.04] px-4 py-3 text-[#e6edf3] outline-none transition placeholder:text-[#484f58] focus:border-[#58a6ff]/40 focus:ring-1 focus:ring-[#58a6ff]/30"
+              className="glass-input w-full px-4 py-3 text-[#e6edf3] outline-none placeholder:text-[#484f58]"
               placeholder="••••••••"
               required
             />
@@ -74,7 +74,7 @@ export default function Login() {
             disabled={loading}
             whileHover={{ scale: loading ? 1 : 1.01 }}
             whileTap={{ scale: loading ? 1 : 0.99 }}
-            className="w-full rounded-xl bg-gradient-to-r from-[#58a6ff] to-[#7c3aed] py-3 text-sm font-semibold text-white shadow-[0_8px_32px_-8px_rgba(88,166,255,0.45)] transition disabled:opacity-50"
+            className="glass-button w-full py-3 text-sm font-semibold text-white disabled:opacity-50"
           >
             {loading ? 'Signing in…' : 'Login'}
           </motion.button>

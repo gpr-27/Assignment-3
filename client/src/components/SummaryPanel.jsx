@@ -1,7 +1,7 @@
 const difficultyStyle = {
-  Beginner: 'bg-emerald-500/15 text-emerald-200 ring-emerald-400/25',
-  Intermediate: 'bg-amber-500/15 text-amber-100 ring-amber-400/25',
-  Advanced: 'bg-rose-500/15 text-rose-100 ring-rose-400/25',
+  Beginner: 'bg-emerald-500/12 text-emerald-200 ring-emerald-400/20',
+  Intermediate: 'bg-amber-500/12 text-amber-100 ring-amber-400/20',
+  Advanced: 'bg-rose-500/12 text-rose-100 ring-rose-400/20',
 }
 
 export default function SummaryPanel({ note }) {
@@ -16,7 +16,7 @@ export default function SummaryPanel({ note }) {
         {note.tags?.map((tag) => (
           <span
             key={tag}
-            className="rounded-full bg-violet-500/15 px-2.5 py-1 text-xs font-medium text-violet-200 ring-1 ring-violet-400/25"
+            className="rounded-full bg-violet-500/10 px-2.5 py-1 text-xs font-medium text-violet-200 ring-1 ring-violet-400/20"
           >
             {tag}
           </span>

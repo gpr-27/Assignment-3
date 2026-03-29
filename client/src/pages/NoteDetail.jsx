@@ -6,12 +6,17 @@ import DashboardLayout from '../components/layout/DashboardLayout'
 import SummaryPanel from '../components/SummaryPanel'
 import BulletsPanel from '../components/BulletsPanel'
 import MindMap from '../components/MindMap'
-import QuizPanel from '../components/QuizPanel'
-import FlashcardsPanel from '../components/FlashcardsPanel'
+import StudyMode from '../components/StudyMode'
 import ChatPanel from '../components/ChatPanel'
 import ExportPanel from '../components/ExportPanel'
 
-const TABS = ['Summary', 'Key Points', 'Mind Map', 'Quiz', 'Flashcards', 'Chat', 'Export']
+const TABS = [
+  { label: 'Overview', icon: '📋' },
+  { label: 'Mind Map', icon: '🗺️' },
+  { label: 'Study', icon: '🧠' },
+  { label: 'Chat', icon: '💬' },
+  { label: 'Export', icon: '📥' },
+]
 
 export default function NoteDetail() {
   const { id } = useParams()
@@ -19,7 +24,6 @@ export default function NoteDetail() {
   const [note, setNote] = useState(null)
   const [activeTab, setActiveTab] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [generating, setGenerating] = useState(false)
 
   useEffect(() => {
     fetchNote()
@@ -38,12 +42,12 @@ export default function NoteDetail() {
   }
 
   const handleDelete = async () => {
-    if (!window.confirm('Delete this note?')) return
+    if (!window.confirm('Archive this note?')) return
     try {
       await api.delete(`/notes/${id}`)
       navigate('/')
     } catch (err) {
-      console.error('Failed to delete:', err)
+      console.error('Failed to archive:', err)
     }
   }
 
@@ -56,20 +60,8 @@ export default function NoteDetail() {
     }
   }
 
-  const handleGenerateQuiz = async () => {
-    setGenerating(true)
-    try {
-      const { data } = await api.post(`/notes/${id}/quiz`)
-      setNote(data)
-    } catch (err) {
-      console.error('Failed to generate quiz:', err)
-    } finally {
-      setGenerating(false)
-    }
-  }
-
   const header = (
-    <div className="border-b border-white/[0.06] bg-[#0d1117]/70 px-4 py-4 backdrop-blur-xl sm:px-8">
+    <div className="border-b border-white/[0.04] bg-[#0a0e14]/70 px-4 py-4 backdrop-blur-2xl backdrop-saturate-[180%] sm:px-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <Link to="/" className="text-sm font-medium text-[#8b949e] transition hover:text-[#58a6ff]">
@@ -79,11 +71,7 @@ export default function NoteDetail() {
             <div className="min-w-0">
               <h1 className="truncate text-lg font-semibold text-white sm:text-xl">{note.title}</h1>
               <p className="text-xs text-[#484f58]">
-                {new Date(note.createdAt).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                })}
+                {new Date(note.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
             </div>
           )}
@@ -93,9 +81,9 @@ export default function NoteDetail() {
           <div className="flex shrink-0 flex-wrap items-center justify-end gap-3">
             <motion.button
               type="button"
-              whileTap={{ scale: 0.92 }}
+              whileTap={{ scale: 0.9 }}
               onClick={toggleFavorite}
-              className="flex h-10 min-w-10 items-center justify-center rounded-xl border border-white/[0.1] bg-white/[0.04] text-lg text-amber-200 transition hover:border-[#58a6ff]/30"
+              className="glass flex h-10 min-w-10 items-center justify-center rounded-2xl text-lg text-amber-200 transition hover:border-[#58a6ff]/25"
               title="Favorite"
             >
               {note.isFavorite ? '★' : '☆'}
@@ -104,9 +92,9 @@ export default function NoteDetail() {
               type="button"
               whileTap={{ scale: 0.95 }}
               onClick={handleDelete}
-              className="rounded-xl border border-red-500/25 bg-red-500/10 px-5 py-2.5 text-sm font-medium text-red-300 transition hover:bg-red-500/20"
+              className="rounded-2xl border border-red-500/20 bg-red-500/8 px-5 py-2.5 text-sm font-medium text-red-300 transition hover:bg-red-500/15"
             >
-              Delete
+              Archive
             </motion.button>
           </div>
         )}
@@ -126,49 +114,44 @@ export default function NoteDetail() {
           </div>
         ) : (
           <>
-            <div className="mb-6 flex w-full gap-1 overflow-x-auto rounded-2xl border border-white/[0.08] bg-white/[0.03] p-1.5 ring-1 ring-white/[0.04] sm:gap-1.5 sm:p-2">
+            {/* ─── Tab Bar ─────────────────────────────────────── */}
+            <div className="glass mb-6 flex w-full gap-1 overflow-x-auto p-1.5 sm:gap-1.5 sm:p-2">
               {TABS.map((tab, i) => (
                 <button
-                  key={tab}
+                  key={tab.label}
                   type="button"
                   onClick={() => setActiveTab(i)}
-                  className={`shrink-0 rounded-xl px-3 py-3 text-sm font-semibold tracking-tight transition sm:min-h-[52px] sm:flex-1 sm:px-4 sm:py-3.5 sm:text-base ${
+                  className={`shrink-0 flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-semibold tracking-tight transition sm:flex-1 sm:justify-center sm:px-5 sm:py-3.5 ${
                     activeTab === i
-                      ? 'bg-gradient-to-r from-[#58a6ff]/25 to-violet-500/25 text-white shadow-[0_0_28px_-6px_rgba(88,166,255,0.45)] ring-1 ring-[#58a6ff]/30'
-                      : 'text-[#8b949e] hover:bg-white/[0.05] hover:text-[#e6edf3]'
+                      ? 'glass-active text-white'
+                      : 'text-[#8b949e] hover:bg-white/[0.04] hover:text-[#e6edf3]'
                   }`}
                 >
-                  {tab}
+                  <span className="text-base">{tab.icon}</span>
+                  <span className="hidden sm:inline">{tab.label}</span>
                 </button>
               ))}
             </div>
 
+            {/* ─── Content Panel ────────────────────────────────── */}
             <motion.div
               key={activeTab}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.2 }}
-              className="rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-6 shadow-xl shadow-black/30 ring-1 ring-white/[0.04] backdrop-blur-md sm:p-10"
+              transition={{ duration: 0.25 }}
+              className="glass-elevated p-6 sm:p-10"
             >
-              {activeTab === 0 && <SummaryPanel note={note} />}
-              {activeTab === 1 && <BulletsPanel bullets={note.bullets} />}
-              {activeTab === 2 && <MindMap mindMap={note.mindMap} />}
-              {activeTab === 3 && (
-                <QuizPanel
-                  quiz={note.quiz}
-                  onGenerate={handleGenerateQuiz}
-                  generating={generating}
-                />
+              {activeTab === 0 && (
+                <div className="space-y-8">
+                  <SummaryPanel note={note} />
+                  <div className="h-px bg-gradient-to-r from-transparent via-white/[0.08] to-transparent" />
+                  <BulletsPanel bullets={note.bullets} />
+                </div>
               )}
-              {activeTab === 4 && (
-                <FlashcardsPanel
-                  flashcards={note.flashcards}
-                  onGenerate={handleGenerateQuiz}
-                  generating={generating}
-                />
-              )}
-              {activeTab === 5 && <ChatPanel noteId={id} />}
-              {activeTab === 6 && <ExportPanel note={note} />}
+              {activeTab === 1 && <MindMap mindMap={note.mindMap} />}
+              {activeTab === 2 && <StudyMode note={note} onNoteUpdate={setNote} />}
+              {activeTab === 3 && <ChatPanel noteId={id} />}
+              {activeTab === 4 && <ExportPanel note={note} />}
             </motion.div>
           </>
         )}

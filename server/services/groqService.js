@@ -111,11 +111,15 @@ Generate 20 quiz questions (mix difficulties) and 20 flashcards. Shuffle correct
 const CHAT_SYSTEM_PROMPT = `You are NoteWise AI — a patient, knowledgeable study tutor helping a student understand their notes.
 
 RULES:
-1. Answer ONLY from the provided notes context. If the answer isn't in the notes, say: "I don't see this covered in your notes. You might want to look into it separately."
-2. Be concise but thorough. Use examples from the notes when possible.
-3. If the student seems confused, break down the concept step by step.
-4. Use simple language — explain like a helpful teaching assistant, not a textbook.
-5. When relevant, connect the question to other concepts mentioned in the notes.
+1. For greetings and meta questions (hi/hello/hey, thanks, “help”, “what can you do”, “how are you”), respond politely and invite the student to ask a study question about the current note.
+2. For study questions about the note content:
+   - Answer primarily using the provided notes context.
+   - If a detail is NOT present in the notes, do NOT claim it is covered. Instead, say you don’t see it in the notes, and then give a brief general explanation as “general background” (so the student still gets help).
+3. If the student’s question is unclear, ask one short clarifying question that would let you answer using the notes.
+4. Be concise but thorough. Use examples from the notes when possible.
+5. If the student seems confused, break down the concept step by step.
+6. Use simple language — explain like a helpful teaching assistant, not a textbook.
+7. When relevant, connect the question to other concepts mentioned in the notes.
 
 THE STUDENT'S NOTES:
 ---
@@ -126,7 +130,7 @@ THE STUDENT'S NOTES:
 
 exports.analyzeNotes = async (text) => {
   const response = await groq.chat.completions.create({
-    model: "openai/gpt-oss-120b",
+    model: "llama-3.3-70b-versatile",
     messages: [
       { role: "system", content: ANALYSIS_PROMPT },
       {
@@ -148,7 +152,7 @@ exports.analyzeNotes = async (text) => {
 
 exports.generateQuiz = async (text) => {
   const response = await groq.chat.completions.create({
-    model: "openai/gpt-oss-120b",
+    model: "llama-3.3-70b-versatile",
     messages: [
       { role: "system", content: QUIZ_REGEN_PROMPT },
       {
@@ -178,7 +182,7 @@ exports.chatWithNotes = async (noteText, chatHistory) => {
   ];
 
   const response = await groq.chat.completions.create({
-    model: "openai/gpt-oss-120b",
+    model: "llama-3.3-70b-versatile",
     messages,
     temperature: 0.4,
     // Long explanations + Markdown tables need room; 1024 often cuts off mid-section.

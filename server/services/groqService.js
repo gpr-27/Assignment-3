@@ -1,9 +1,29 @@
-const Groq = require('groq-sdk');
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
+const Groq = require("groq-sdk");
+const fs = require("fs");
+const path = require("path");
+const os = require("os");
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+
+/** Parse JSON from chat completions; strips optional markdown code fences if present. */
+function parseGroqJson(content, context) {
+  if (content == null || typeof content !== "string") {
+    throw new Error(
+      `Empty response from Groq${context ? ` (${context})` : ""}. Check GROQ_API_KEY and model availability.`,
+    );
+  }
+  let s = content.trim();
+  const fence = /^```(?:json)?\s*\n?([\s\S]*?)\n?```$/m;
+  const m = s.match(fence);
+  if (m) s = m[1].trim();
+  try {
+    return JSON.parse(s);
+  } catch (e) {
+    throw new Error(
+      `Invalid JSON from Groq${context ? ` (${context})` : ""}: ${e.message}. First 200 chars: ${s.slice(0, 200)}`,
+    );
+  }
+}
 
 // ─── Master Analysis Prompt ─────────────────────────────────────────
 // Single comprehensive prompt: generates summary, bullets, tags,
@@ -21,7 +41,7 @@ Analyze the provided notes thoroughly and return ONLY a valid JSON object (no ma
   ],
 
   "tags": [
-    "4-8 tags with # prefix. Mix broad categories (#data-structures, #biology) with specific concepts (#red-black-trees, #mitosis). Use kebab-case."
+    " tags with # prefix. Mix broad categories (#data-structures, #biology) with specific concepts (#red-black-trees, #mitosis). Use kebab-case."
   ],
 
   "difficulty": "Exactly one of: Beginner, Intermediate, Advanced. Judge by prerequisite-knowledge depth, not text length.",
@@ -84,7 +104,7 @@ Return ONLY valid JSON (no markdown) with:
   ]
 }
 
-Generate 5-8 quiz questions (mix difficulties) and 5-8 flashcards. Shuffle correctIndex.`;
+Generate 20 quiz questions (mix difficulties) and 20 flashcards. Shuffle correctIndex.`;
 
 // ─── Chat Prompt ────────────────────────────────────────────────────
 
@@ -106,21 +126,21 @@ THE STUDENT'S NOTES:
 
 exports.analyzeNotes = async (text) => {
   const response = await groq.chat.completions.create({
-    model: 'llama-3.1-8b-instant',
+    model: "openai/gpt-oss-120b",
     messages: [
-      { role: 'system', content: ANALYSIS_PROMPT },
+      { role: "system", content: ANALYSIS_PROMPT },
       {
-        role: 'user',
+        role: "user",
         content: `Analyze these notes and generate complete study materials:\n\n${text}`,
       },
     ],
     temperature: 0.3,
     max_tokens: 6144,
-    response_format: { type: 'json_object' },
+    response_format: { type: "json_object" },
   });
 
   const content = response.choices[0].message.content;
-  return JSON.parse(content);
+  return parseGroqJson(content, "analyzeNotes");
 };
 
 // ─── Quiz Regeneration ──────────────────────────────────────────────
@@ -128,21 +148,21 @@ exports.analyzeNotes = async (text) => {
 
 exports.generateQuiz = async (text) => {
   const response = await groq.chat.completions.create({
-    model: 'llama-3.1-8b-instant',
+    model: "openai/gpt-oss-120b",
     messages: [
-      { role: 'system', content: QUIZ_REGEN_PROMPT },
+      { role: "system", content: QUIZ_REGEN_PROMPT },
       {
-        role: 'user',
+        role: "user",
         content: `Create a fresh quiz and flashcards from these notes:\n\n${text}`,
       },
     ],
     temperature: 0.5,
     max_tokens: 4096,
-    response_format: { type: 'json_object' },
+    response_format: { type: "json_object" },
   });
 
   const content = response.choices[0].message.content;
-  return JSON.parse(content);
+  return parseGroqJson(content, "generateQuiz");
 };
 
 // ─── Chat with Notes ────────────────────────────────────────────────
@@ -150,7 +170,7 @@ exports.generateQuiz = async (text) => {
 
 exports.chatWithNotes = async (noteText, chatHistory) => {
   const messages = [
-    { role: 'system', content: CHAT_SYSTEM_PROMPT + noteText + '\n---' },
+    { role: "system", content: CHAT_SYSTEM_PROMPT + noteText + "\n---" },
     ...chatHistory.map((msg) => ({
       role: msg.role,
       content: msg.content,
@@ -158,10 +178,11 @@ exports.chatWithNotes = async (noteText, chatHistory) => {
   ];
 
   const response = await groq.chat.completions.create({
-    model: 'llama-3.1-8b-instant',
+    model: "openai/gpt-oss-120b",
     messages,
     temperature: 0.4,
-    max_tokens: 1024,
+    // Long explanations + Markdown tables need room; 1024 often cuts off mid-section.
+    max_tokens: 8192,
   });
 
   return response.choices[0].message.content;
@@ -171,7 +192,7 @@ exports.chatWithNotes = async (noteText, chatHistory) => {
 // Transcribes audio using Groq Whisper, returns plain text.
 
 exports.transcribeAudio = async (fileBuffer, originalName) => {
-  const ext = path.extname(originalName) || '.mp3';
+  const ext = path.extname(originalName) || ".mp3";
   const tmpPath = path.join(os.tmpdir(), `notewise-audio-${Date.now()}${ext}`);
 
   try {
@@ -179,12 +200,14 @@ exports.transcribeAudio = async (fileBuffer, originalName) => {
 
     const transcription = await groq.audio.transcriptions.create({
       file: fs.createReadStream(tmpPath),
-      model: 'whisper-large-v3',
-      language: 'en',
-      response_format: 'text',
+      model: "whisper-large-v3",
+      language: "en",
+      response_format: "text",
     });
 
-    return typeof transcription === 'string' ? transcription : transcription.text;
+    return typeof transcription === "string"
+      ? transcription
+      : transcription.text;
   } finally {
     try {
       fs.unlinkSync(tmpPath);

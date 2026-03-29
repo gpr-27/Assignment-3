@@ -22,7 +22,7 @@ export default function Sidebar({ tags = [] }) {
   const onNew = location.pathname === '/new'
 
   return (
-    <aside className="glass-sidebar flex h-full w-64 shrink-0 flex-col">
+    <aside className="glass-sidebar flex h-[100dvh] w-64 shrink-0 flex-col overflow-y-auto overflow-x-hidden md:h-screen">
       {/* Logo */}
       <div className="p-6 pb-5">
         <Link to="/" className="group flex items-center gap-3">

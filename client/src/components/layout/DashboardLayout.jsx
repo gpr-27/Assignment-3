@@ -4,15 +4,16 @@ import Sidebar from './Sidebar'
 
 export default function DashboardLayout({ children, header, tags = [], showFab = true }) {
   return (
-    <div className="relative flex min-h-screen text-[#e6edf3]">
+    <div className="relative flex h-[100dvh] min-h-0 overflow-hidden text-[#e6edf3] md:h-screen">
       <div className="bg-mesh" aria-hidden />
-      <div className="relative z-10 hidden md:flex">
+      {/* Sidebar: fixed height to viewport; does not scroll with main content */}
+      <div className="relative z-10 hidden shrink-0 md:flex md:h-full md:min-h-0">
         <Sidebar tags={tags} />
       </div>
 
-      <div className="relative z-10 flex min-w-0 flex-1 flex-col">
+      <div className="relative z-10 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         {/* Mobile nav */}
-        <header className="flex items-center justify-between gap-2 border-b border-white/[0.04] bg-[#0a0e14]/80 px-4 py-3 backdrop-blur-2xl backdrop-saturate-[180%] md:hidden">
+        <header className="flex shrink-0 items-center justify-between gap-2 border-b border-white/[0.04] bg-[#0a0e14]/80 px-4 py-3 backdrop-blur-2xl backdrop-saturate-[180%] md:hidden">
           <Link to="/" className="text-base font-semibold text-white">
             NoteWise
           </Link>
@@ -29,8 +30,8 @@ export default function DashboardLayout({ children, header, tags = [], showFab =
           </div>
         </header>
 
-        {header}
-        <div className="flex-1 overflow-y-auto">{children}</div>
+        {header ? <div className="shrink-0">{header}</div> : null}
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-y-contain">{children}</div>
       </div>
 
       {/* FAB */}

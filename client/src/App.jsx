@@ -11,7 +11,7 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="min-h-screen bg-[#0d1117] text-[#e6edf3] antialiased">
+        <div className="min-h-screen bg-[#0a0e14] text-[#e6edf3] antialiased">
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

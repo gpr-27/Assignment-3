@@ -1,12 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --bg-deep: #0d1117;
-  --bg-elevated: #161b22;
-  --border-subtle: rgba(139, 148, 158, 0.2);
+  --bg-deep: #0a0e14;
+  --bg-elevated: #12171f;
+  --border-subtle: rgba(255, 255, 255, 0.06);
   --accent: #58a6ff;
-  --accent-glow: rgba(88, 166, 255, 0.45);
-  --violet-glow: rgba(139, 92, 246, 0.35);
+  --accent-glow: rgba(88, 166, 255, 0.5);
+  --violet: #a855f7;
+  --violet-glow: rgba(168, 85, 247, 0.4);
 }
 
 html {
@@ -14,75 +15,201 @@ html {
 }
 
 body {
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", system-ui, sans-serif;
   background-color: var(--bg-deep);
   color: #e6edf3;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Animated mesh gradient background */
+/* ─── Animated Mesh Gradient Background ──────────────────────────── */
+
 .bg-mesh {
   position: fixed;
   inset: 0;
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 80% 50% at 20% -20%, rgba(88, 166, 255, 0.18), transparent),
-    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(139, 92, 246, 0.15), transparent),
-    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(56, 189, 248, 0.08), transparent);
-  animation: mesh-shift 18s ease-in-out infinite alternate;
+    radial-gradient(ellipse 80% 50% at 20% -20%, rgba(88, 166, 255, 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(168, 85, 247, 0.10), transparent),
+    radial-gradient(ellipse 50% 60% at 50% 100%, rgba(56, 189, 248, 0.06), transparent);
+  animation: mesh-shift 20s ease-in-out infinite alternate;
 }
 
 @keyframes mesh-shift {
-  0% {
-    opacity: 1;
-    filter: hue-rotate(0deg);
-  }
-  100% {
-    opacity: 0.95;
-    filter: hue-rotate(25deg);
-  }
+  0% { opacity: 1; filter: hue-rotate(0deg); }
+  100% { opacity: 0.92; filter: hue-rotate(30deg); }
 }
 
-/* Custom scrollbar (dark) */
+/* ─── Apple Frosted Glass System ─────────────────────────────────── */
+
+.glass {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
+}
+
+.glass-elevated {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+}
+
+.glass-sidebar {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.01) 100%
+  );
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 14px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-input:focus {
+  border-color: rgba(88, 166, 255, 0.35);
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.10), 0 0 24px rgba(88, 166, 255, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.glass-button {
+  background: linear-gradient(135deg, #58a6ff 0%, #7c3aed 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 8px 32px -4px rgba(88, 166, 255, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-button:hover {
+  box-shadow:
+    0 12px 40px -4px rgba(88, 166, 255, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  filter: brightness(1.08);
+}
+
+.glass-active {
+  background: linear-gradient(
+    135deg,
+    rgba(88, 166, 255, 0.18) 0%,
+    rgba(168, 85, 247, 0.18) 100%
+  );
+  border: 1px solid rgba(88, 166, 255, 0.25);
+  box-shadow:
+    0 0 28px -6px rgba(88, 166, 255, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* ─── Glass card hover effect ────────────────────────────────────── */
+
+.glass-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+
+.glass-card:hover::before {
+  opacity: 1;
+}
+
+.glass-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(88, 166, 255, 0.25);
+  box-shadow:
+    0 20px 60px -15px rgba(88, 166, 255, 0.2),
+    0 0 0 1px rgba(88, 166, 255, 0.08);
+}
+
+/* ─── Custom Scrollbar ───────────────────────────────────────────── */
+
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(88, 166, 255, 0.35) transparent;
+  scrollbar-color: rgba(88, 166, 255, 0.25) transparent;
 }
 
-*::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+*::-webkit-scrollbar { width: 6px; height: 6px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: rgba(88, 166, 255, 0.2); border-radius: 999px; }
+*::-webkit-scrollbar-thumb:hover { background: rgba(88, 166, 255, 0.4); }
 
-*::-webkit-scrollbar-track {
-  background: transparent;
-}
+/* ─── React Flow Custom Styles ───────────────────────────────────── */
 
-*::-webkit-scrollbar-thumb {
-  background: rgba(88, 166, 255, 0.25);
-  border-radius: 999px;
-}
-
-*::-webkit-scrollbar-thumb:hover {
-  background: rgba(88, 166, 255, 0.45);
-}
-
-/* React Flow dark pane */
 .react-flow__controls {
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4) !important;
-  border: 1px solid rgba(139, 148, 158, 0.2) !important;
-  border-radius: 12px !important;
-  background: rgba(22, 27, 34, 0.9) !important;
-  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 14px !important;
+  background: rgba(18, 23, 31, 0.9) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
 }
 
 .react-flow__controls-button {
   background: transparent !important;
-  border-bottom: 1px solid rgba(139, 148, 158, 0.15) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
   fill: #8b949e !important;
 }
 
 .react-flow__controls-button:hover {
   background: rgba(88, 166, 255, 0.12) !important;
+}
+
+/* ─── Utility Animations ─────────────────────────────────────────── */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
 }

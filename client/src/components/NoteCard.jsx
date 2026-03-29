@@ -4,9 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import api from '../utils/api'
 
 const difficultyStyle = {
-  Beginner: 'bg-emerald-500/15 text-emerald-300 ring-emerald-400/25',
-  Intermediate: 'bg-amber-500/15 text-amber-200 ring-amber-400/25',
-  Advanced: 'bg-rose-500/15 text-rose-200 ring-rose-400/25',
+  Beginner: 'bg-emerald-500/12 text-emerald-300 ring-emerald-400/20',
+  Intermediate: 'bg-amber-500/12 text-amber-200 ring-amber-400/20',
+  Advanced: 'bg-rose-500/12 text-rose-200 ring-rose-400/20',
 }
 
 export default function NoteCard({ note, onUpdate, onRemove }) {
@@ -29,18 +29,20 @@ export default function NoteCard({ note, onUpdate, onRemove }) {
   const handleDelete = async (e) => {
     e.preventDefault()
     e.stopPropagation()
-    if (!window.confirm('Delete this note permanently?')) return
+    if (!window.confirm('Archive this note?')) return
     try {
       await api.delete(`/notes/${note._id}`)
       onRemove(note._id)
     } catch (err) {
-      console.error('Failed to delete:', err)
+      console.error('Failed to archive:', err)
     }
   }
 
   const preview =
     note.summary?.slice(0, 180) ||
     (note.rawText ? `${note.rawText.slice(0, 160)}…` : 'No preview')
+
+  const hasStudy = (note.quiz?.length || 0) + (note.flashcards?.length || 0) > 0
 
   return (
     <motion.div
@@ -53,13 +55,8 @@ export default function NoteCard({ note, onUpdate, onRemove }) {
       className="group relative h-full"
     >
       <Link to={`/notes/${note._id}`} className="block h-full">
-        <div
-          className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-5 shadow-lg shadow-black/20 ring-1 ring-white/[0.04] backdrop-blur-md transition-all duration-300 ${
-            hovered
-              ? '-translate-y-1 border-[#58a6ff]/35 shadow-[0_20px_50px_-15px_rgba(88,166,255,0.25),0_0_0_1px_rgba(88,166,255,0.12)]'
-              : ''
-          }`}
-        >
+        <div className="glass glass-card relative flex h-full flex-col p-5">
+          {/* Top row */}
           <div className="mb-3 flex min-h-10 items-center justify-between gap-3">
             <div className="min-w-0 flex-1">
               <AnimatePresence mode="popLayout">
@@ -73,9 +70,9 @@ export default function NoteCard({ note, onUpdate, onRemove }) {
                     transition={{ duration: 0.15 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={handleDelete}
-                    className="rounded-lg border border-red-500/35 bg-red-500/15 px-2.5 py-1.5 text-[11px] font-semibold text-red-200 transition hover:bg-red-500/25"
+                    className="rounded-xl border border-red-500/25 bg-red-500/10 px-2.5 py-1.5 text-[11px] font-semibold text-red-200 transition hover:bg-red-500/20"
                   >
-                    Delete
+                    Archive
                   </motion.button>
                 )}
               </AnimatePresence>
@@ -83,50 +80,47 @@ export default function NoteCard({ note, onUpdate, onRemove }) {
             <motion.button
               type="button"
               onClick={toggleFavorite}
-              whileTap={{ scale: 0.88 }}
-              className="shrink-0 flex h-9 w-9 items-center justify-center rounded-xl border border-white/[0.12] bg-[#0d1117]/85 text-base backdrop-blur-md transition hover:border-[#58a6ff]/45 hover:shadow-[0_0_18px_-4px_rgba(88,166,255,0.45)]"
+              whileTap={{ scale: 0.85 }}
+              className="glass shrink-0 flex h-9 w-9 items-center justify-center rounded-2xl text-base transition hover:border-[#58a6ff]/30 hover:shadow-[0_0_18px_-4px_rgba(88,166,255,0.4)]"
               title={note.isFavorite ? 'Remove from favorites' : 'Add to favorites'}
             >
-              <motion.span
-                animate={starBurst ? { scale: [1, 1.35, 1], rotate: [0, 15, -15, 0] } : {}}
-                transition={{ duration: 0.35 }}
-              >
+              <motion.span animate={starBurst ? { scale: [1, 1.4, 1], rotate: [0, 15, -15, 0] } : {}} transition={{ duration: 0.35 }}>
                 {note.isFavorite ? '★' : '☆'}
               </motion.span>
             </motion.button>
           </div>
 
+          {/* Title */}
           <div className="mb-3">
             <h3 className="line-clamp-2 text-base font-semibold leading-snug text-white transition group-hover:text-[#79c0ff]">
               {note.title}
             </h3>
           </div>
 
+          {/* Preview */}
           <p className="mb-4 line-clamp-3 flex-1 text-sm leading-relaxed text-[#8b949e]">{preview}</p>
 
+          {/* Tags */}
           <div className="mb-4 flex flex-wrap gap-2">
-            {note.tags?.slice(0, 5).map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full bg-violet-500/12 px-2.5 py-0.5 text-[11px] font-medium text-violet-200 ring-1 ring-violet-400/20"
-              >
+            {note.tags?.slice(0, 4).map((tag) => (
+              <span key={tag} className="rounded-full bg-violet-500/10 px-2.5 py-0.5 text-[11px] font-medium text-violet-200 ring-1 ring-violet-400/15">
                 {tag}
               </span>
             ))}
+            {hasStudy && (
+              <span className="rounded-full bg-[#58a6ff]/10 px-2.5 py-0.5 text-[11px] font-medium text-[#58a6ff] ring-1 ring-[#58a6ff]/15">
+                🧠 Study Ready
+              </span>
+            )}
           </div>
 
-          <div className="mt-auto flex items-center justify-between border-t border-white/[0.06] pt-4">
-            <span
-              className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ring-1 ${difficultyStyle[note.difficulty] || 'bg-white/10 text-[#8b949e] ring-white/10'}`}
-            >
+          {/* Footer */}
+          <div className="mt-auto flex items-center justify-between border-t border-white/[0.04] pt-4">
+            <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ring-1 ${difficultyStyle[note.difficulty] || 'bg-white/10 text-[#8b949e] ring-white/10'}`}>
               {note.difficulty}
             </span>
             <span className="text-xs text-[#484f58]">
-              {new Date(note.createdAt).toLocaleDateString(undefined, {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-              })}
+              {new Date(note.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
             </span>
           </div>
         </div>

@@ -106,7 +106,7 @@ THE STUDENT'S NOTES:
 
 exports.analyzeNotes = async (text) => {
   const response = await groq.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
+    model: 'llama-3.1-8b-instant',
     messages: [
       { role: 'system', content: ANALYSIS_PROMPT },
       {
@@ -128,7 +128,7 @@ exports.analyzeNotes = async (text) => {
 
 exports.generateQuiz = async (text) => {
   const response = await groq.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
+    model: 'llama-3.1-8b-instant',
     messages: [
       { role: 'system', content: QUIZ_REGEN_PROMPT },
       {
@@ -158,7 +158,7 @@ exports.chatWithNotes = async (noteText, chatHistory) => {
   ];
 
   const response = await groq.chat.completions.create({
-    model: 'llama-3.3-70b-versatile',
+    model: 'llama-3.1-8b-instant',
     messages,
     temperature: 0.4,
     max_tokens: 1024,

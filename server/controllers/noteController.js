@@ -1,17 +1,22 @@
-const Note = require('../models/Note');
-const Conversation = require('../models/Conversation');
-const { PDFParse } = require('pdf-parse');
-const { analyzeNotes, generateQuiz, chatWithNotes, transcribeAudio } = require('../services/groqService');
+const Note = require("../models/Note");
+const Conversation = require("../models/Conversation");
+const { PDFParse } = require("pdf-parse");
+const {
+  analyzeNotes,
+  generateQuiz,
+  chatWithNotes,
+  transcribeAudio,
+} = require("../services/groqService");
 
 const AUDIO_MIMES = [
-  'audio/mpeg',
-  'audio/mp3',
-  'audio/wav',
-  'audio/x-wav',
-  'audio/mp4',
-  'audio/x-m4a',
-  'audio/m4a',
-  'audio/webm',
+  "audio/mpeg",
+  "audio/mp3",
+  "audio/wav",
+  "audio/x-wav",
+  "audio/mp4",
+  "audio/x-m4a",
+  "audio/m4a",
+  "audio/webm",
 ];
 
 // ─── Analyze Note ────────────────────────────────────────────────────
@@ -19,28 +24,36 @@ const AUDIO_MIMES = [
 
 exports.analyzeNote = async (req, res) => {
   try {
-    let text = req.body.text || '';
-    const title = req.body.title || 'Untitled Note';
+    let text = req.body.text || "";
+    const title = req.body.title || "Untitled Note";
 
     if (req.file) {
       const mime = req.file.mimetype;
 
-      if (mime === 'application/pdf') {
+      if (mime === "application/pdf") {
         const parser = new PDFParse({ data: req.file.buffer });
         try {
           const pdfResult = await parser.getText();
-          text = pdfResult.text || '';
+          text = pdfResult.text || "";
         } finally {
           await parser.destroy();
         }
       } else if (AUDIO_MIMES.includes(mime)) {
-        const transcript = await transcribeAudio(req.file.buffer, req.file.originalname);
+        const transcript = await transcribeAudio(
+          req.file.buffer,
+          req.file.originalname,
+        );
         text = transcript;
       }
     }
 
     if (!text.trim()) {
-      return res.status(400).json({ error: 'No text provided. Paste notes, upload a PDF, or upload an audio file.' });
+      return res
+        .status(400)
+        .json({
+          error:
+            "No text provided. Paste notes, upload a PDF, or upload an audio file.",
+        });
     }
 
     // Single API call now returns everything including quiz + flashcards
@@ -70,7 +83,10 @@ exports.analyzeNote = async (req, res) => {
 
 exports.getAllNotes = async (req, res) => {
   try {
-    const notes = await Note.find({ userId: req.userId, isDeleted: { $ne: true } }).sort({ createdAt: -1 });
+    const notes = await Note.find({
+      userId: req.userId,
+      isDeleted: { $ne: true },
+    }).sort({ createdAt: -1 });
     res.json(notes);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -83,7 +99,7 @@ exports.getNoteById = async (req, res) => {
   try {
     const note = await Note.findOne({ _id: req.params.id, userId: req.userId });
     if (!note) {
-      return res.status(404).json({ error: 'Note not found' });
+      return res.status(404).json({ error: "Note not found" });
     }
     res.json(note);
   } catch (err) {
@@ -100,12 +116,12 @@ exports.deleteNote = async (req, res) => {
     const note = await Note.findOneAndUpdate(
       { _id: req.params.id, userId: req.userId },
       { $set: { isDeleted: true } },
-      { new: true }
+      { new: true },
     );
     if (!note) {
-      return res.status(404).json({ error: 'Note not found' });
+      return res.status(404).json({ error: "Note not found" });
     }
-    res.json({ message: 'Note archived' });
+    res.json({ message: "Note archived" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -117,12 +133,12 @@ exports.toggleFavorite = async (req, res) => {
   try {
     const note = await Note.findOne({ _id: req.params.id, userId: req.userId });
     if (!note) {
-      return res.status(404).json({ error: 'Note not found' });
+      return res.status(404).json({ error: "Note not found" });
     }
     const updated = await Note.findOneAndUpdate(
       { _id: req.params.id, userId: req.userId },
       { $set: { isFavorite: !note.isFavorite } },
-      { new: true }
+      { new: true },
     );
     res.json(updated);
   } catch (err) {
@@ -138,7 +154,7 @@ exports.generateNoteQuiz = async (req, res) => {
   try {
     const note = await Note.findOne({ _id: req.params.id, userId: req.userId });
     if (!note) {
-      return res.status(404).json({ error: 'Note not found' });
+      return res.status(404).json({ error: "Note not found" });
     }
 
     const quizData = await generateQuiz(note.rawText);
@@ -149,7 +165,7 @@ exports.generateNoteQuiz = async (req, res) => {
     const updated = await Note.findOneAndUpdate(
       { _id: req.params.id, userId: req.userId },
       { $set: { quiz: newQuiz, flashcards: newFlashcards } },
-      { new: true }
+      { new: true },
     );
 
     res.json(updated);
@@ -166,7 +182,7 @@ exports.getChatHistory = async (req, res) => {
   try {
     const note = await Note.findOne({ _id: req.params.id, userId: req.userId });
     if (!note) {
-      return res.status(404).json({ error: 'Note not found' });
+      return res.status(404).json({ error: "Note not found" });
     }
 
     const convo = await Conversation.findOne({
@@ -190,12 +206,12 @@ exports.chatWithNote = async (req, res) => {
   try {
     const { message } = req.body;
     if (!message || !message.trim()) {
-      return res.status(400).json({ error: 'Message is required' });
+      return res.status(400).json({ error: "Message is required" });
     }
 
     const note = await Note.findOne({ _id: req.params.id, userId: req.userId });
     if (!note) {
-      return res.status(404).json({ error: 'Note not found' });
+      return res.status(404).json({ error: "Note not found" });
     }
 
     // Find or create the conversation document for this user + note
@@ -214,7 +230,7 @@ exports.chatWithNote = async (req, res) => {
 
     // Build user message object
     const userMsg = {
-      role: 'user',
+      role: "user",
       content: message.trim(),
       createdAt: new Date(),
     };
@@ -238,7 +254,7 @@ exports.chatWithNote = async (req, res) => {
 
     // Push assistant message into conversation
     const assistantMsg = {
-      role: 'assistant',
+      role: "assistant",
       content: aiResponse,
       createdAt: new Date(),
     };
@@ -247,7 +263,10 @@ exports.chatWithNote = async (req, res) => {
 
     const savedAssistantMsg = convo.messages[convo.messages.length - 1];
 
-    res.json({ userMessage: savedUserMsg, assistantMessage: savedAssistantMsg });
+    res.json({
+      userMessage: savedUserMsg,
+      assistantMessage: savedAssistantMsg,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

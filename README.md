@@ -22,13 +22,13 @@ A full-stack MERN application that lets you paste or upload PDF notes and get AI
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
+| Layer    | Technology                                                       |
+| -------- | ---------------------------------------------------------------- |
 | Frontend | React 19, Vite, TailwindCSS v4, `@xyflow/react`, `framer-motion` |
-| Backend | Node.js, Express, JWT, bcryptjs, multer, pdf-parse |
-| Database | MongoDB (Atlas or local instance) |
-| AI | Groq API — `llama-3.3-70b-versatile` |
-| DevOps | Docker, Docker Compose, Kubernetes (Minikube) |
+| Backend  | Node.js, Express, JWT, bcryptjs, multer, pdf-parse               |
+| Database | MongoDB (Atlas or local instance)                                |
+| AI       | Groq API — `llama-3.3-70b-versatile`                             |
+| DevOps   | Docker, Docker Compose, Kubernetes (Minikube)                    |
 
 ---
 
@@ -71,31 +71,38 @@ There are three ways to run this project on your local machine: **Native (npm), 
 ### ⚙️ Option 1: Native (Node.js & npm)
 
 **1. Backend**
+
 ```bash
 cd server
 npm install
 ```
-Create a `server/.env` file:
+
+Create a root `.env` file (same level as `Dockerfile`):
+
 ```env
 PORT=5000
 MONGO_URI=mongodb+srv://<user>:<pass>@cluster.mongodb.net/notewise
 GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxx
 JWT_SECRET=your_jwt_secret_key
 ```
+
 Start the server:
+
 ```bash
 npm start
 # Server runs at http://localhost:5000
 ```
 
 **2. Frontend**
+
 ```bash
 cd ../client
 npm install
 npm run dev
 # App runs at http://localhost:5173
 ```
-*Note: The Vite dev server proxies API requests to the backend.*
+
+_Note: The Vite dev server proxies API requests to the backend._
 
 ---
 
@@ -112,7 +119,7 @@ docker compose up --build
 
 3. The application will be accessible at: `http://localhost:5000`.
 
-*(If you ever need to run the Docker container standalone without Compose, you can build it with `docker build -t notewise:latest .` and pass the required environment variables during `docker run`.)*
+_(If you ever need to run the Docker container standalone without Compose, you can build it with `docker build -t notewise:latest .` and pass the required environment variables during `docker run`.)_
 
 ---
 
@@ -121,18 +128,21 @@ docker compose up --build
 You can orchestrate the application using the predefined Kubernetes manifests located in the `k8s/` directory.
 
 1. **Start Minikube & Configure Docker:**
+
    ```bash
    minikube start
    eval $(minikube docker-env)
    ```
 
 2. **Build the Application Image inside Minikube:**
+
    ```bash
    docker build -t notewise:latest .
    ```
 
 3. **Configure Secrets:**
    Create a secret for your API keys using `kubectl`:
+
    ```bash
    kubectl create secret generic notewise-secrets \
      --from-literal=GROQ_API_KEY="your_groq_api_key_here" \
@@ -140,6 +150,7 @@ You can orchestrate the application using the predefined Kubernetes manifests lo
    ```
 
 4. **Deploy Database & Application:**
+
    ```bash
    kubectl apply -f k8s/mongo.yaml
    kubectl apply -f k8s/app.yaml
@@ -159,11 +170,11 @@ You can orchestrate the application using the predefined Kubernetes manifests lo
 
 ## 🔐 Environment Variables Reference
 
-| Variable | Description | Location | Default / Example |
-|----------|-------------|----------|-------------------|
-| `PORT` | Server port | `.env` / Docker | `5000` |
-| `MONGO_URI` | MongoDB Connection URL | `.env` / Docker | `mongodb://mongo:27017/notewise` |
-| `GROQ_API_KEY` | Groq API key | `.env` / K8s Secret | *Required* |
-| `JWT_SECRET` | JWT signing secret | `.env` / K8s Secret | *Required* |
+| Variable       | Description            | Location            | Default / Example                |
+| -------------- | ---------------------- | ------------------- | -------------------------------- |
+| `PORT`         | Server port            | `.env` / Docker     | `5000`                           |
+| `MONGO_URI`    | MongoDB Connection URL | `.env` / Docker     | `mongodb://mongo:27017/notewise` |
+| `GROQ_API_KEY` | Groq API key           | `.env` / K8s Secret | _Required_                       |
+| `JWT_SECRET`   | JWT signing secret     | `.env` / K8s Secret | _Required_                       |
 
-*⚠️ **Note:** The `.env` file must be excluded from version control (via `.gitignore`). Never commit real API keys or JWT secrets publicly.*
+_⚠️ **Note:** The `.env` file must be excluded from version control (via `.gitignore`). Never commit real API keys or JWT secrets publicly._
